@@ -44,9 +44,9 @@ contract NxNIsland {
     function getArea(uint[][] calldata matrix) public view returns (uint) {
         console.log(matrix.length);
 
-        // if (matrix.length == 0) {
-        //     revert InvalidMatrixDimensions();
-        // }
+        if (matrix.length == 0) {
+            revert InvalidMatrixDimensions();
+        }
         
         // uint memory rows = matrix.length;
         // unit memory cols = matrix[0].length;
