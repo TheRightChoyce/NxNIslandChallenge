@@ -41,18 +41,26 @@ contract NxNIsland {
         uint32 maxSize;
     }
 
-    function getArea(uint[][] calldata matrix) public view returns (uint) {
-        console.log(matrix.length);
+    // Mappings like this need to be in storage, so let's define on the contract level
+    mapping (uint => mapping(uint => Node) ) public graph;
 
-        if (matrix.length == 0) {
+    // Define the matix we'll be testing
+    uint[][] public matrix;
+
+    constructor(uint[][] memory _matrix) {
+        console.log(matrix.length);
+        if (_matrix.length == 0) {
             revert InvalidMatrixDimensions();
         }
+        matrix = _matrix;
+    }
+
+    function getArea() public view returns (uint) {
         
-        // uint memory rows = matrix.length;
-        // unit memory cols = matrix[0].length;
-        // mapping (uint[matrix.length] => mapping(uint => Node) ) memory graph;
-       
-        revert("Not Implemented");
-        // return 0;
+        uint rows = matrix.length;
+        uint cols = matrix[0].length;
+        
+        // revert("Not Implemented");
+        return 0;
     }
 }

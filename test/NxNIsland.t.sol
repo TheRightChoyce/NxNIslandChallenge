@@ -15,7 +15,7 @@ contract NxNIslandTest is Test {
             [1,0],
             [1,0]
         ];
-        nXNIsland = new NxNIsland();
+        nXNIsland = new NxNIsland(testMatrix);
     }
 
     // function testGetArea() public {
@@ -24,12 +24,12 @@ contract NxNIslandTest is Test {
     // }
 
 
-    function testGetAreaRevertsOnZeroLengthArray() public {
+    function testRevertsOnZeroLengthArray() public {
         uint[][] memory invalidMatrix;
         vm.expectRevert(
             abi.encodeWithSelector(NxNIsland.InvalidMatrixDimensions.selector)
         );
-        nXNIsland.getArea(invalidMatrix);
+        new NxNIsland(invalidMatrix);
     }
     function testGetAreaRevertsOnMisMatchedLengthArray() public {
         assertTrue(true);
@@ -40,8 +40,8 @@ contract NxNIslandTest is Test {
         // ];
     }
 
-    function testGetAreaAcceptsMatrix() public {
-        nXNIsland.getArea(testMatrix);
+    function testAcceptsValidMatrix() public {
+        new NxNIsland(testMatrix);
         assertTrue(true);
     }
 }
