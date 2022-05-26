@@ -6,16 +6,10 @@ import "forge-std/Test.sol";
 
 contract NxNIslandTest is Test {
 
-    NxNIsland nXNIsland;
-    uint[][] testMatrix;
+    NxNIsland island;
     function setUp() public {
         emit log("setUp");
-        testMatrix = [
-            [0,1],
-            [1,0],
-            [1,0]
-        ];
-        nXNIsland = new NxNIsland(testMatrix);
+        island = new NxNIsland();
     }
 
     // function testGetArea() public {
@@ -23,25 +17,8 @@ contract NxNIslandTest is Test {
     //     assertTrue(result == 0);
     // }
 
-
-    function testRevertsOnZeroLengthArray() public {
-        uint[][] memory invalidMatrix;
-        vm.expectRevert(
-            abi.encodeWithSelector(NxNIsland.InvalidMatrixDimensions.selector)
-        );
-        new NxNIsland(invalidMatrix);
-    }
-    function testGetAreaRevertsOnMisMatchedLengthArray() public {
-        assertTrue(true);
-        // Sending a mismatched array like this won't even compile
-        // uint[][] memory invalidMatrix = [
-        //     [0,1],
-        //     [0,0,0]
-        // ];
-    }
-
-    function testAcceptsValidMatrix() public {
-        new NxNIsland(testMatrix);
-        assertTrue(true);
+    function testContract() public {
+        uint result = island.CalculateIsland();
+        assertEq(0, result);
     }
 }
