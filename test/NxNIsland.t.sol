@@ -1,24 +1,47 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.13;
 
-import "../lib/ds-test/src/test.sol";
 import "../src/NxNIsland.sol";
+import "forge-std/Test.sol";
 
-contract NxNIslandTest is DSTest {
+contract NxNIslandTest is Test {
 
     NxNIsland nXNIsland;
+    uint[][] testMatrix;
     function setUp() public {
         emit log("setUp");
+        testMatrix = [
+            [0,1],
+            [1,0],
+            [1,0]
+        ];
         nXNIsland = new NxNIsland();
     }
 
-    function testExample() public {
-        assertTrue(true);
+    function testGetArea() public {
+        uint result = nXNIsland.getArea(testMatrix);
+        assertTrue(result == 0);
     }
 
-    function testGetArea() public {
-        uint result = nXNIsland.getArea();
-        
-        assertTrue(result == 0);
+
+    function testGetAreaRevertsOnZeroLengthArray() public {
+        uint[][] memory invalidMatrix;
+        nXNIsland.getArea(invalidMatrix);
+        vm.expectRevert(
+            abi.encodeWithSelector(NxNIsland.InvalidMatrixDimensions.selector)
+        );
+    }
+    function testGetAreaRevertsOnMisMatchedLengthArray() public {
+        assertTrue(true);
+        // Sending a mismatched array like this won't even compile
+        // uint[][] memory invalidMatrix = [
+        //     [0,1],
+        //     [0,0,0]
+        // ];
+    }
+
+    function testGetAreaAcceptsMatrix() public {
+        nXNIsland.getArea(testMatrix);
+        assertTrue(true);
     }
 }

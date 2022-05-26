@@ -33,22 +33,26 @@ import "forge-std/console.sol";
 
 contract NxNIsland {
 
+    error InvalidMatrixDimensions();
+
     // Define a node structure that we can use to track each indice pair of a given graph.
     struct Node {
         bool visited;
         uint32 maxSize;
     }
 
-    // Define the matrix we want to check against
-    uint[][] public matrix = [
-        [0,1],
-        [1,0],
-        [1,0]
-    ];
-    
+    function getArea(uint[][] calldata matrix) public view returns (uint) {
+        console.log(matrix.length);
 
-    function getArea() public view returns (uint) {
-        console.log("matrix.length", matrix.length);        
-        return 0;
+        // if (matrix.length == 0) {
+        //     revert InvalidMatrixDimensions();
+        // }
+        
+        // uint memory rows = matrix.length;
+        // unit memory cols = matrix[0].length;
+        // mapping (uint[matrix.length] => mapping(uint => Node) ) memory graph;
+       
+        revert("Not Implemented");
+        // return 0;
     }
 }
