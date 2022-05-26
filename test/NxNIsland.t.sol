@@ -8,7 +8,7 @@ contract NxNIslandTest is Test {
 
     NxNIsland island;
     function setUp() public {
-        emit log("setUp");
+        // emit log("setUp");
         island = new NxNIsland();
     }
 
@@ -19,6 +19,14 @@ contract NxNIslandTest is Test {
 
     function testContract() public {
         uint result = island.CalculateIsland();
-        assertEq(2, result);
+        assertEq(result, island.getExpectedMaxIslandSize());
+        
+        // uint8[][] memory matrix = island.getMatrix();
+        // emit log_uint(matrix[0][0]);
+        // emit log_uint(matrix[0][1]);
+        // emit log_uint(matrix[0][2]);
+        // emit log_uint(matrix[1][0]);
+        // emit log_uint(matrix[1][1]);
+        // emit log_uint(matrix[1][2]);        
     }
 }
