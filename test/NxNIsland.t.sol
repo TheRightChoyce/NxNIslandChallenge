@@ -19,6 +19,6 @@ contract NxNIslandTest is Test {
 
     function testContract() public {
         uint result = island.CalculateIsland();
-        assertEq(0, result);
+        assertEq(2, result);
     }
 }

@@ -38,6 +38,12 @@ contract NxNIsland {
     // Define a node structure that we can use to track each indice pair of a given graph.
     struct Node {
         bool visited;
+        uint visitedCount;
+        uint maxSize;
+    }
+
+    struct GetAreaResult {
+        bool deadEnd;
         uint maxSize;
     }
 
@@ -50,29 +56,37 @@ contract NxNIsland {
         [0,0,0],
         [0,0,0]
     ];
+    uint public maxIslandSize;
+    uint public expectedMaxIslandSize = 2;
+    
+    // Helper to track the current call depth
+    uint callDepth;
+    
+    // Helpers 
     uint rowLength;
     uint colLength;
 
-    uint public maxIslandSize;
-
     constructor() {
-        // Use -1 here to so we don't need to use <= later
-        // using < vs. <= in solidty is a small gas savings
-        // rowLength = matrix.length - 1;
-        // colLength = matrix[0].length -1;
-
         rowLength = matrix.length;
         colLength = matrix[0].length;
     }
 
     function CalculateIsland() public returns (uint) {
-        // getArea(0, 0, 0);
-        // return maxIslandSize;
         
         for(uint x = 0; x < rowLength; x++) {
             for(uint y = 0; y < colLength; y++ ) {
-                getArea(x,y,0);
+                getArea(x, y, 0);
             }
+        }
+        
+        for ( uint x; x < rowLength; x++) {
+            for (uint y; y < colLength; y++) {
+                Node memory node = graph[x][y];
+                console.log("Graph", x, y);
+                console.log("  visitedCount: ", node.visitedCount);
+                console.log("  maxSize: ", node.maxSize);
+            }
+            
         }
 
         return maxIslandSize;
@@ -82,41 +96,70 @@ contract NxNIsland {
         uint x,
         uint y,
         uint maxSize
-    ) internal returns (bool) {
+    ) internal returns (GetAreaResult memory) {
+        
+        // If we've already visited this node, return the result
+        if (graph[x][y].visited == true) {
+            return GetAreaResult(
+                true,
+                graph[x][y].maxSize
+            );
+        }
 
         uint8 value = matrix[x][y];
-        uint _maxSize = maxSize;
-        bool deadEnd = true;
+        bool deadEnd = false;
+
+        GetAreaResult memory result = GetAreaResult(
+            false, maxSize
+        );
 
         console.log("Value at", x, y);
-        console.log("is", value);
-        console.log("maxSize", maxSize);
-        console.log("");
+        console.log("  is", value);
+        console.log("  current maxSize", maxSize);
+        console.log("  callDepth", callDepth);
         
         if (value == 1) {
 
-            _maxSize++;
-            
+            // If this is the value of 1, dive!
+            maxSize++;
+
+            console.log("  maxSize now", maxSize);
+            console.log("  diving!");
+
             for(uint _x = x; _x < rowLength && !deadEnd; _x++) {
                 deadEnd = false;
                 
-                for(uint _y = 0; _y < colLength && !deadEnd; _y++ ) {
-                    deadEnd = getArea(_x, _y, maxSize);
-                    console.log("DeadEnd?", x, y, deadEnd);
+                for(uint _y = y+1; _y < colLength && !deadEnd; _y++ ) {
+                    console.log("  Calling getArea", _x, _y);
+                    callDepth++;
+                    result = getArea(_x, _y, maxSize);
+
+                    deadEnd = result.deadEnd;
+                    maxSize = result.maxSize;
+                    
+                    console.log("  DeadEnd?", _x, _y, deadEnd);
+                    callDepth--;
                 }
             }
         } else {
             deadEnd = true;
         }
 
-        Node memory node = graph[x][y];
-        node.visited = true;
-        node.maxSize = _maxSize;
+        graph[x][y].visited = true;
+        graph[x][y].maxSize = maxSize;
+        graph[x][y].visitedCount++;
 
-        if (node.maxSize > maxIslandSize) {
-            maxIslandSize = node.maxSize;
+        if (maxSize > maxIslandSize) {
+            maxIslandSize = graph[x][y].maxSize;
         }
+
+        console.log("");
+
+        GetAreaResult memory finalResult = GetAreaResult(
+            deadEnd,
+            maxSize
+        );
         
-        return true;
+        return finalResult;
     }
 }
