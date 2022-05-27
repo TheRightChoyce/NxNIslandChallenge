@@ -56,13 +56,13 @@ contract NxNIsland {
     //     [0,0,0]
     // ];
     uint8[][] public matrix = [
-        [0,1,2],
+        [0,1,0],
         [3,4,5],
         [6,7,8]
     ];
 
     uint public maxIslandSize;
-    uint public expectedMaxIslandSize = 3;
+    uint public expectedMaxIslandSize = 8;
     
     // Helper to track the current call depth
     uint callDepth;
@@ -71,10 +71,16 @@ contract NxNIsland {
     // Helpers 
     uint rowLength;
     uint colLength;
+    uint maxRowLength;
+    uint maxColLength;
 
     constructor() {
         rowLength = matrix.length;
         colLength = matrix[0].length;
+
+        // Save some gas ?
+        maxRowLength = matrix.length - 1;
+        maxColLength = matrix[0].length - 1;
     }
 
     function getExpectedMaxIslandSize() public view returns (uint) {
@@ -85,79 +91,124 @@ contract NxNIsland {
         return matrix;
     }
 
-    function CalculateIsland() public returns (uint) {
-        
-        for(uint x = 0; x < rowLength; x++) {
-            for(uint y = 0; y < colLength; y++ ) {
-                getArea(x, y, 0);
+    // keep track of unique nodeIds
+    uint nodeId;
+    mapping (uint => mapping(uint => uint) ) public nodeIds;
+
+    // Create a mapping of islands
+    uint islandId;
+    // Unique id => maps to a list of nodeIds
+    mapping (uint => uint[]) islands;
+    // Track the size of each island
+    mapping (uint => uint) islandSize;
+    
+    // for each node, track which island they belong to
+    mapping (uint => uint) public nodeIslandMap;
+    
+    function mapIslands() public {
+
+        // uint maxArea;
+
+        // nodeIds[0][1] = nodeId++;
+        // console.log(getIslandArea(0, 1, 0, ++islandId));
+
+        // load up our nodeIds
+        for (uint x = 0; x < rowLength; x++) {
+            for (uint y = 0; y < rowLength; y++) {
+                uint result = getIslandArea(x, y, 0, ++islandId);
+                islandSize[islandId] = result;        
             }
-        }
-        
-        for ( uint x; x < rowLength; x++) {
-            for (uint y; y < colLength; y++) {
-                Node memory node = graph[x][y];
-                console.log("Graph", x, y);
-                console.log("  visited: ", node.visited);
-                console.log("  maxSize: ", node.maxSize);
-            }
-            
         }
 
-        return maxIslandSize;
+        for (uint i = 1; i <= islandId; i++) {
+            console.log("IslandId => Length", i, islandSize[i]);
+        }
+
+        // Ensure uniqueness
+        // Loop through our matrix and determine the unique islands
+        // console.log(nodeIds[0][0]);
+        // console.log(nodeIds[0][1]);
+        // console.log(nodeIds[0][2]);
     }
 
-    function getArea(
+    function getIslandArea(
         uint x,
         uint y,
-        uint maxSize
-    ) internal returns (GetAreaResult memory) {
+        uint area,
+        uint _islandId
+    ) public returns (uint) {
+
+        // Track the local area
+        uint _area = 0;
         
-        // If we've already visited this node, return the result
-        if (graph[x][y].visited == true) {
-            return GetAreaResult(
-                true,
-                graph[x][y].maxSize
-            );
+        // First, ensure this node has a uniqueId
+        if (nodeIds[x][y] == 0) {
+            nodeIds[x][y] = ++nodeId;
         }
-        // Otherwise, increment our node counter
-        nodesVisited++;
 
-        GetAreaResult memory result = GetAreaResult(
-            false, // deadEnd bool
-            maxSize
-        );
+        console.log("(x,y)", x, y);
+        console.log("  nodeIds[x][y]", nodeIds[x][y]);
+        console.log("  area =>", area);
+        console.log("  _islandId => ", _islandId);
+        console.log("  matrix[x][y] =>", matrix[x][y]);
+        console.log("  nodeIslandMap[nodeIds[x][y]] =>", nodeIslandMap[nodeIds[x][y]]);
 
-        // current value
-        uint8 value = matrix[x][y];
-
-        console.log("Value at", x, y);
-        console.log("  is", value);
-
-        // Check for a "dead end" via 0
-        if (value == 0) {
-            result.deadEnd = true;
-
-            // Make sure to update this node
-            graph[x][y].maxSize = result.maxSize;
-            graph[x][y].visited = true;
-            
-            return result;
+        // If zero, return
+        // TODO -- if this is the first time we encounter a zero,
+        // flip it to 1 and continue
+        if (matrix[x][y] == 0) {
+            console.log("    returning 0!");
+            return 0;
         }
-        // else keep buidling up the size!
-        result.maxSize++;
 
-        console.log("  maxSize =>", maxSize, result.maxSize);
-        console.log("  callDepth", callDepth);
+        // See if we've already visited this island
+        if (nodeIslandMap[nodeIds[x][y]] == _islandId) {
+            console.log("    returning 0 -- already visited!");
+            return 0;
+        }
 
-        graph[x][y].maxSize = result.maxSize;
-        graph[x][y].visited = true;
+        // Include this node in the area
+        _area++;
+        
+        // Map this node to this island, and then map this island to this node
+        nodeIslandMap[nodeIds[x][y]] = _islandId;
+        islands[_islandId].push(nodeId);
+        
 
-        if (result.maxSize > maxIslandSize) {
-            maxIslandSize = result.maxSize;
+        // For each node, check all directions
+        // In solidty v8+ we need to either check for out of bounds or flag 
+        // this block as "unchecked"
+
+        uint _y = y;
+        uint _x = x;
+        
+        // check up, translate by [0, -1]
+        while (_y > 0) {
+            console.log("  going left", _x, _y-1);
+            _area += getIslandArea(x, --_y, area, _islandId);
+        }
+        // check down, translate by [0, 1]
+        _y = y;
+        while (_y < maxColLength) {
+            console.log("  going right", _x, _y+1);
+            _area += getIslandArea(x, ++_y, area, _islandId);
+        }
+
+        // check left, translate by [-1, 0]
+        if (_x > 0) {
+            console.log("  going up", _x-1, _y);
+            _area += getIslandArea(--_x, y, area, _islandId);
+        }
+
+        // check right, translate by [1, 0]
+        _x = x;
+        while (_x < maxRowLength) {
+            console.log("  going down", _x+1, _y);
+            _area += getIslandArea(++_x, y, area, _islandId);
         }
 
         console.log("");
-        
-        return result;
+
+        return _area;
     }
 }

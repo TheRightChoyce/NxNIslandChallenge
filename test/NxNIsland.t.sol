@@ -17,16 +17,24 @@ contract NxNIslandTest is Test {
     //     assertTrue(result == 0);
     // }
 
-    function testContract() public {
-        uint result = island.CalculateIsland();
-        assertEq(result, island.getExpectedMaxIslandSize());
+    // function testContract() public {
+    //     uint result = island.CalculateIsland();
+    //     assertEq(result, island.getExpectedMaxIslandSize());
         
-        // uint8[][] memory matrix = island.getMatrix();
-        // emit log_uint(matrix[0][0]);
-        // emit log_uint(matrix[0][1]);
-        // emit log_uint(matrix[0][2]);
-        // emit log_uint(matrix[1][0]);
-        // emit log_uint(matrix[1][1]);
-        // emit log_uint(matrix[1][2]);        
+    //     // uint8[][] memory matrix = island.getMatrix();
+    //     // emit log_uint(matrix[0][0]);
+    //     // emit log_uint(matrix[0][1]);
+    //     // emit log_uint(matrix[0][2]);
+    //     // emit log_uint(matrix[1][0]);
+    //     // emit log_uint(matrix[1][1]);
+    //     // emit log_uint(matrix[1][2]);        
+    // }
+    // function testContract2() public {
+    //     uint result = island.CalculateIsland2();
+    //     assertEq(result, island.getExpectedMaxIslandSize());
+    // }
+
+    function testMapIslands() public {        
+        island.mapIslands();
     }
 }
