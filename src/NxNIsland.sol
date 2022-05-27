@@ -25,48 +25,45 @@ import "forge-std/console.sol";
 // # Output: 4
 // # Explanation: Can't change any 0 to 1, only one island with area = 4.
 
-// 
-// 1 0 1 -- 1 
-// 0 1 1 -- 1 
-// 0 0 1 -- 1 
-// 
-
 contract NxNIsland {
 
-    error InvalidMatrixDimensions();
-
-    // Define a node structure that we can use to track each indice pair of a given graph.
-    struct Node {
-        bool visited;
-        uint maxSize;
-    }
-
-    struct GetAreaResult {
-        bool deadEnd;
-        uint maxSize;
-    }
-
-    // Mappings like this need to be in storage, so let's define on the contract level
-    mapping (uint => mapping(uint => Node) ) public graph;
-
     // Define the matix we'll be testing
-    // uint8[][] public matrix = [
-    //     [0,1,1],
-    //     [0,1,0],
-    //     [0,0,0]
-    // ];
     uint8[][] public matrix = [
-        // [0,1,0,1],
-        // [3,0,5,1],
-        // [6,7,0,0],
-        // [1,0,1,1]
-        [0,1],
-        [1,0]
-        // [0,0,0]
+        // [1,0], // expected 3
+        // [0,1]
+
+        // [1,1], // expected 4
+        // [0,1]
+
+        // [1,1], // expected 4
+        // [1,1]
+
+        // [1,1,0,1,0,1], // expected 8
+        // [1,0,1,0,0,1],
+        // [0,0,1,0,0,1],
+        // [1,0,0,1,0,1],
+        // [0,0,0,0,0,1],
+        // [0,0,0,0,0,1]
+
+        // [1,1,0,1,0,1], // expected 9
+        // [1,0,1,0,0,1],
+        // [0,0,1,0,0,1],
+        // [1,0,0,1,0,0],
+        // [0,1,1,1,0,1],
+        // [1,1,0,0,0,1]
+
+        [1,1,1,1,1,1,1], // expected 49
+        [1,1,1,1,1,1,1],
+        [1,1,1,1,1,1,1],
+        [1,1,0,1,1,0,1],
+        [1,1,1,1,1,1,1],
+        [1,1,1,1,1,1,1],
+        [1,1,1,1,1,1,1]
+
     ];
 
     uint public maxIslandSize;
-    uint public expectedMaxIslandSize = 3;
+    uint public expectedMaxIslandSize = 48;
     
     // Total number of nodes touch in the journey
     uint nodesVisited;      
@@ -85,7 +82,7 @@ contract NxNIsland {
         rowLength = matrix.length;
         colLength = matrix[0].length;
 
-        // Save some gas ?
+        // Save some gas by not having to constantly do <= on 0-based numbers
         maxRowLength = matrix.length - 1;
         maxColLength = matrix[0].length - 1;
     }
@@ -119,8 +116,16 @@ contract NxNIsland {
 
     // Max Island Size
     uint maxSize;
+    uint largestIslandId;
     
     function mapIslands() public returns (uint) {
+
+        // If desired, create the nodeIds in advance for easy debugging
+        // for (uint y = 0; y < rowLength; y++) {
+        //     for (uint x = 0; x < rowLength; x++) {
+        //         nodeIds[x][y] = ++nodeId;
+        //     }
+        // }
 
         // Loop through each row and then each col
         for (uint y = 0; y < rowLength; y++) {
@@ -133,12 +138,17 @@ contract NxNIsland {
                 // Track the max size as we traverse
                 if (result > maxSize) {
                     maxSize = result;
+                    largestIslandId = islandId;
                 }
             }
         }
 
         console.log("");
         console.log("// Final results:");
+        console.log("   n =>", rowLength);
+        console.log("   n^2 =>", rowLength * rowLength);
+        console.log("   n^3 =>", rowLength * rowLength * rowLength);
+        console.log("   n^4 =>", rowLength * rowLength * rowLength * rowLength);
         console.log("   nodesVisited =>", nodesVisited);
         console.log("   nodesTraversed =>", nodesTraversed);
         console.log("   max island size =>", maxSize);
@@ -186,6 +196,14 @@ contract NxNIsland {
             console.log("    returning 0 -- already visited!");
             return 0;
         }
+
+        // If not flipping -->
+        // Exit if this node already exists in any island
+        // This works great for finding the longest current island, but does not work for finding the flipping islands
+        // if (nodeIslandMap[nodeIds[x][y]] > 0) {
+        //     console.log("    returning 0 -- already mapped!");
+        //     return 0;
+        // }
 
         // Since we passed all those checks, flag this as a new node visited
         nodesTraversed++;
@@ -267,5 +285,10 @@ contract NxNIsland {
         for( uint i = 0; i < islands[_islandId].length; i++) {
             console.log(islands[_islandId][i]);
         }
+    }
+    function logLongestIsland() public view {
+         for( uint i = 0; i < islands[largestIslandId].length; i++) {
+            console.log(islands[largestIslandId][i]);
+         }
     }
 }
