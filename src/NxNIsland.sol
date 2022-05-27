@@ -97,8 +97,10 @@ contract NxNIsland {
 
     // Create a mapping of islands
     uint islandId;
+    
     // Unique id => maps to a list of nodeIds
     mapping (uint => uint[]) islands;
+    
     // Track the size of each island
     mapping (uint => uint) islandSize;
     
@@ -107,15 +109,10 @@ contract NxNIsland {
     
     function mapIslands() public {
 
-        // uint maxArea;
-
-        // nodeIds[0][1] = nodeId++;
-        // console.log(getIslandArea(0, 1, 0, ++islandId));
-
-        // load up our nodeIds
+        // Loop through each
         for (uint x = 0; x < rowLength; x++) {
             for (uint y = 0; y < rowLength; y++) {
-                uint result = getIslandArea(x, y, 0, ++islandId);
+                uint result = getIslandArea(x, y, ++islandId);
                 islandSize[islandId] = result;        
             }
         }
@@ -123,18 +120,11 @@ contract NxNIsland {
         for (uint i = 1; i <= islandId; i++) {
             console.log("IslandId => Length", i, islandSize[i]);
         }
-
-        // Ensure uniqueness
-        // Loop through our matrix and determine the unique islands
-        // console.log(nodeIds[0][0]);
-        // console.log(nodeIds[0][1]);
-        // console.log(nodeIds[0][2]);
     }
 
     function getIslandArea(
         uint x,
         uint y,
-        uint area,
         uint _islandId
     ) public returns (uint) {
 
@@ -148,7 +138,6 @@ contract NxNIsland {
 
         console.log("(x,y)", x, y);
         console.log("  nodeIds[x][y]", nodeIds[x][y]);
-        console.log("  area =>", area);
         console.log("  _islandId => ", _islandId);
         console.log("  matrix[x][y] =>", matrix[x][y]);
         console.log("  nodeIslandMap[nodeIds[x][y]] =>", nodeIslandMap[nodeIds[x][y]]);
@@ -185,26 +174,26 @@ contract NxNIsland {
         // check up, translate by [0, -1]
         while (_y > 0) {
             console.log("  going left", _x, _y-1);
-            _area += getIslandArea(x, --_y, area, _islandId);
+            _area += getIslandArea(x, --_y, _islandId);
         }
         // check down, translate by [0, 1]
         _y = y;
         while (_y < maxColLength) {
             console.log("  going right", _x, _y+1);
-            _area += getIslandArea(x, ++_y, area, _islandId);
+            _area += getIslandArea(x, ++_y, _islandId);
         }
 
         // check left, translate by [-1, 0]
         if (_x > 0) {
             console.log("  going up", _x-1, _y);
-            _area += getIslandArea(--_x, y, area, _islandId);
+            _area += getIslandArea(--_x, y, _islandId);
         }
 
         // check right, translate by [1, 0]
         _x = x;
         while (_x < maxRowLength) {
             console.log("  going down", _x+1, _y);
-            _area += getIslandArea(++_x, y, area, _islandId);
+            _area += getIslandArea(++_x, y, _islandId);
         }
 
         console.log("");
