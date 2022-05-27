@@ -52,18 +52,33 @@ contract NxNIsland {
         // [0,1,1,1,0,1],
         // [1,1,0,0,0,1]
 
-        [1,1,1,1,1,1,1], // expected 49
-        [1,1,1,1,1,1,1],
-        [1,1,1,1,1,1,1],
-        [1,1,0,1,1,0,1],
-        [1,1,1,1,1,1,1],
-        [1,1,1,1,1,1,1],
-        [1,1,1,1,1,1,1]
+        // [1,1,1,1,1,1,1], // expected 48
+        // [1,1,1,1,1,1,1],
+        // [1,1,1,1,1,1,1],
+        // [1,1,0,1,1,0,1],
+        // [1,1,1,1,1,1,1],
+        // [1,1,1,1,1,1,1],
+        // [1,1,1,1,1,1,1]
 
+        // [1,1,1,1,1,1,1], // expected 49
+        // [1,1,1,1,1,1,1],
+        // [1,1,1,1,1,1,1],
+        // [1,1,1,1,1,1,1],
+        // [1,1,1,1,1,1,1],
+        // [1,1,1,1,1,1,1],
+        // [1,1,1,1,1,1,1]
+
+        [0,0,0,0,0,0,0], // expected 1
+        [0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0]
     ];
 
     uint public maxIslandSize;
-    uint public expectedMaxIslandSize = 48;
+    uint public expectedMaxIslandSize = 1;
     
     // Total number of nodes touch in the journey
     uint nodesVisited;      
@@ -130,17 +145,25 @@ contract NxNIsland {
         // Loop through each row and then each col
         for (uint y = 0; y < rowLength; y++) {
             for (uint x = 0; x < rowLength; x++) {
-                uint result = getIslandArea(x, y, ++islandId);
-                islandSize[islandId] = result;
-                console.log("========");
-                console.log("");
+                
+                if (matrix[x][y] == 0) {
+                    uint result = getIslandArea(x, y, ++islandId);
+                    islandSize[islandId] = result;
+                    console.log("========");
+                    console.log("");
 
-                // Track the max size as we traverse
-                if (result > maxSize) {
-                    maxSize = result;
-                    largestIslandId = islandId;
-                }
+                    // Track the max size as we traverse
+                    if (result > maxSize) {
+                        maxSize = result;
+                        largestIslandId = islandId;
+                    }
+                }                
             }
+        }
+
+        // Edge case! If the matrix does not contain any 0s then we need to return the full grid as the maxsize (i.e. its fully hydrated)
+        if (maxSize == 0) {
+            maxSize = rowLength * colLength;
         }
 
         console.log("");
@@ -196,14 +219,6 @@ contract NxNIsland {
             console.log("    returning 0 -- already visited!");
             return 0;
         }
-
-        // If not flipping -->
-        // Exit if this node already exists in any island
-        // This works great for finding the longest current island, but does not work for finding the flipping islands
-        // if (nodeIslandMap[nodeIds[x][y]] > 0) {
-        //     console.log("    returning 0 -- already mapped!");
-        //     return 0;
-        // }
 
         // Since we passed all those checks, flag this as a new node visited
         nodesTraversed++;
