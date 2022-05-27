@@ -35,6 +35,7 @@ contract NxNIslandTest is Test {
     // }
 
     function testMapIslands() public {        
-        island.mapIslands();
+        uint result = island.mapIslands();
+        assertEq(result, island.getExpectedMaxIslandSize());    
     }
 }

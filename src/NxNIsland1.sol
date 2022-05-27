@@ -91,193 +91,193 @@ contract NxNIsland {
         return matrix;
     }
 
-    function CalculateIsland() public returns (uint) {
+    // function CalculateIsland() public returns (uint) {
         
-        for(uint x = 0; x < rowLength; x++) {
-            for(uint y = 0; y < colLength; y++ ) {
-                getArea(x, y, 0);
-                console.log("");
-            }
-        }
+    //     for(uint x = 0; x < rowLength; x++) {
+    //         for(uint y = 0; y < colLength; y++ ) {
+    //             getArea(x, y, 0);
+    //             console.log("");
+    //         }
+    //     }
         
-        for ( uint x; x < rowLength; x++) {
-            for (uint y; y < colLength; y++) {
-                Node memory node = graph[x][y];
-                console.log("Graph", x, y);
-                console.log("  visited: ", node.visited);
-                console.log("  maxSize: ", node.maxSize);
-            }
+    //     for ( uint x; x < rowLength; x++) {
+    //         for (uint y; y < colLength; y++) {
+    //             Node memory node = graph[x][y];
+    //             console.log("Graph", x, y);
+    //             console.log("  visited: ", node.visited);
+    //             console.log("  maxSize: ", node.maxSize);
+    //         }
             
-        }
+    //     }
 
-        return maxIslandSize;
-    }
+    //     return maxIslandSize;
+    // }
 
-    function getArea(
-        uint x,
-        uint y,
-        uint maxSize
-    ) internal returns (GetAreaResult memory) {
+    // function getArea(
+    //     uint x,
+    //     uint y,
+    //     uint maxSize
+    // ) internal returns (GetAreaResult memory) {
         
-        // If we've already visited this node, return the result
-        if (graph[x][y].visited == true) {
-            return GetAreaResult(
-                true,
-                graph[x][y].maxSize
-            );
-        }
-        // Otherwise, increment our node counter
-        nodesVisited++;
+    //     // If we've already visited this node, return the result
+    //     if (graph[x][y].visited == true) {
+    //         return GetAreaResult(
+    //             true,
+    //             graph[x][y].maxSize
+    //         );
+    //     }
+    //     // Otherwise, increment our node counter
+    //     nodesVisited++;
 
-        GetAreaResult memory result = GetAreaResult(
-            false, // deadEnd bool
-            maxSize
-        );
+    //     GetAreaResult memory result = GetAreaResult(
+    //         false, // deadEnd bool
+    //         maxSize
+    //     );
 
-        // current value
-        uint8 value = matrix[x][y];
+    //     // current value
+    //     uint8 value = matrix[x][y];
 
-        // console.log("Value at", x, y);
-        // console.log("  is", value);
+    //     // console.log("Value at", x, y);
+    //     // console.log("  is", value);
 
-        // Check for a "dead end" via 0
-        if (value == 0) {
-            result.deadEnd = true;
+    //     // Check for a "dead end" via 0
+    //     if (value == 0) {
+    //         result.deadEnd = true;
 
-            console.log(value, result.maxSize);
+    //         console.log(value, result.maxSize);
 
-            // Make sure to update this node
-            graph[x][y].maxSize = result.maxSize;
-            graph[x][y].visited = true;
+    //         // Make sure to update this node
+    //         graph[x][y].maxSize = result.maxSize;
+    //         graph[x][y].visited = true;
             
-            return result;
-        }
-        // else keep buidling up the size!
-        result.maxSize++;
+    //         return result;
+    //     }
+    //     // else keep buidling up the size!
+    //     result.maxSize++;
 
-        console.log(value, result.maxSize);
+    //     console.log(value, result.maxSize);
 
-        // console.log("  maxSize =>", maxSize, result.maxSize);
-        // console.log("  callDepth", callDepth);
+    //     // console.log("  maxSize =>", maxSize, result.maxSize);
+    //     // console.log("  callDepth", callDepth);
 
-        // First let's look to the right, so increment x by 1
-        // Keep going right until we hit deadEnd (boundry or a 0)
-        // once we hit a deadEnd, increase y by one, and then start looping through X again
+    //     // First let's look to the right, so increment x by 1
+    //     // Keep going right until we hit deadEnd (boundry or a 0)
+    //     // once we hit a deadEnd, increase y by one, and then start looping through X again
 
-        uint localMaxSize;
+    //     uint localMaxSize;
 
-        for(uint _y = y+1; _y < colLength && !result.deadEnd; _y++ ) {
-            ++callDepth;
+    //     for(uint _y = y+1; _y < colLength && !result.deadEnd; _y++ ) {
+    //         ++callDepth;
                 
-            result = getArea(x, _y, result.maxSize);
+    //         result = getArea(x, _y, result.maxSize);
 
-            if (result.maxSize > localMaxSize) {
-                localMaxSize = result.maxSize;
-            }
+    //         if (result.maxSize > localMaxSize) {
+    //             localMaxSize = result.maxSize;
+    //         }
             
-            --callDepth;
-        }
+    //         --callDepth;
+    //     }
 
-        // Reset status and now search the columns
-        result.deadEnd = false;
+    //     // Reset status and now search the columns
+    //     result.deadEnd = false;
 
-        for(uint _x = x+1; _x < rowLength && !result.deadEnd; ++_x) {
-            ++callDepth;
+    //     for(uint _x = x+1; _x < rowLength && !result.deadEnd; ++_x) {
+    //         ++callDepth;
             
-            result = getArea(_x, y, result.maxSize);
+    //         result = getArea(_x, y, result.maxSize);
             
-            if (result.maxSize > localMaxSize) {
-                localMaxSize = result.maxSize;
-            }
+    //         if (result.maxSize > localMaxSize) {
+    //             localMaxSize = result.maxSize;
+    //         }
             
-            --callDepth;
-        }
+    //         --callDepth;
+    //     }
 
-        // Once we're done with this node, map back the final results to our graph
-        graph[x][y].maxSize = localMaxSize;
-        graph[x][y].visited = true;
+    //     // Once we're done with this node, map back the final results to our graph
+    //     graph[x][y].maxSize = localMaxSize;
+    //     graph[x][y].visited = true;
 
-        if (localMaxSize > maxIslandSize) {
-            maxIslandSize = localMaxSize;
-        }
+    //     if (localMaxSize > maxIslandSize) {
+    //         maxIslandSize = localMaxSize;
+    //     }
 
-        console.log(value, localMaxSize);
+    //     console.log(value, localMaxSize);
 
-        // console.log("");
+    //     // console.log("");
         
-        return result;
-    }
+    //     return result;
+    // }
 
-    mapping (uint => mapping(uint => bool) ) public visited;
-    mapping (uint => mapping(uint => uint) ) public size;
+    // mapping (uint => mapping(uint => bool) ) public visited;
+    // mapping (uint => mapping(uint => uint) ) public size;
 
-    function CalculateIsland2() public returns (uint) {
+    // function CalculateIsland2() public returns (uint) {
         
-        for(uint x = 0; x < rowLength; x++) {
-            for(uint y = 0; y < colLength; y++ ) {
-                getArea2(x, y, 0);
-                console.log("");
-            }
-        }
+    //     for(uint x = 0; x < rowLength; x++) {
+    //         for(uint y = 0; y < colLength; y++ ) {
+    //             getArea2(x, y, 0);
+    //             console.log("");
+    //         }
+    //     }
         
-        for ( uint x; x < rowLength; x++) {
-            for (uint y; y < colLength; y++) {
-                console.log("Node", x, y);
-                console.log("  Visited: ", visited[x][y]);
-                console.log("  MaxSize: ", size[x][y]);
-            }
+    //     for ( uint x; x < rowLength; x++) {
+    //         for (uint y; y < colLength; y++) {
+    //             console.log("Node", x, y);
+    //             console.log("  Visited: ", visited[x][y]);
+    //             console.log("  MaxSize: ", size[x][y]);
+    //         }
             
-        }
+    //     }
 
-        console.log("MaxIsland: ", maxIslandSize);
+    //     console.log("MaxIsland: ", maxIslandSize);
 
-        return maxIslandSize;
-    }
+    //     return maxIslandSize;
+    // }
 
-     function getArea2(
-        uint x,
-        uint y,
-        uint inputSize
-    ) internal returns (uint) {
+    //  function getArea2(
+    //     uint x,
+    //     uint y,
+    //     uint inputSize
+    // ) internal returns (uint) {
 
-        if (visited[x][y]) {
-            return inputSize + size[x][y];
-        }
+    //     if (visited[x][y]) {
+    //         return inputSize + size[x][y];
+    //     }
 
-        visited[x][y] = true;
+    //     visited[x][y] = true;
 
-        uint value = matrix[x][y];
+    //     uint value = matrix[x][y];
 
-        console.log(value);
+    //     console.log(value);
 
-        // If this is a 0-node, then its a dead end for now
-        if (value == 0) {
-            size[x][y] = inputSize;
-            return inputSize;
-        }
+    //     // If this is a 0-node, then its a dead end for now
+    //     if (value == 0) {
+    //         size[x][y] = inputSize;
+    //         return inputSize;
+    //     }
 
-        // Since this is non-zero, increase size by 1
-        uint _size = inputSize + 1;
+    //     // Since this is non-zero, increase size by 1
+    //     uint _size = inputSize + 1;
 
-        uint _x = x;
-        uint _y = y;
+    //     uint _x = x;
+    //     uint _y = y;
 
-        console.log("(x,y) =>", x, y, _size);
+    //     console.log("(x,y) =>", x, y, _size);
 
-        // else, increase out size and check the next node
-        if (_x < maxRowLength ) {
-            _size = getArea2(++_x, y, _size);
-            if (_y < maxColLength ) {
-                _size = getArea2(x, ++_y, _size);
-            }
-        }
+    //     // else, increase out size and check the next node
+    //     if (_x < maxRowLength ) {
+    //         _size = getArea2(++_x, y, _size);
+    //         if (_y < maxColLength ) {
+    //             _size = getArea2(x, ++_y, _size);
+    //         }
+    //     }
 
-        size[x][y] = _size;
+    //     size[x][y] = _size;
 
-        console.log("  (x,y) size => ", x, y, _size);
+    //     console.log("  (x,y) size => ", x, y, _size);
 
-        return _size;
-    }
+    //     return _size;
+    // }
 
     // keep track of unique nodeIds
     uint nodeId;
