@@ -11,8 +11,8 @@ contract NxNIslandMap {
     uint256 public matrixLength;
 
     // Helpers 
-    uint numRows;
-    uint numColumns;
+    uint rowCount;
+    uint columnCount;
 
     // constructor(
     //     uint8[] memory _flatMatrix,
@@ -34,10 +34,22 @@ contract NxNIslandMap {
     // }
 
      constructor(
-        uint _numColumns
+        uint8 _rowCount,
+        uint8 _columnCount,
+        uint8[] memory _flatMatrix
     )
     {
-        numColumns = numRows = _numColumns;
+        rowCount = _rowCount;
+        columnCount = _columnCount;
+
+        if (_flatMatrix.length > 0) {
+            for (uint i = 0; i < rowCount; i++) {
+                for (uint j = 0; j < columnCount; j++) {
+                    matrix[i].push(_flatMatrix[(i * columnCount) + j]);
+                    matrixLength++;
+                }
+            }
+        }
     }
 
     function pushElement (uint row, uint8 el) external {
