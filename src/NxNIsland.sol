@@ -28,57 +28,10 @@ import "forge-std/console.sol";
 contract NxNIsland {
 
     // Define the matix we'll be testing
-    uint8[][] public matrix = [
-        // [1,0], // expected 3
-        // [0,1]
-
-        // [1,1], // expected 4
-        // [0,1]
-
-        // [1,1], // expected 4
-        // [1,1]
-
-        // [1,1,0,1,0,1], // expected 8
-        // [1,0,1,0,0,1],
-        // [0,0,1,0,0,1],
-        // [1,0,0,1,0,1],
-        // [0,0,0,0,0,1],
-        // [0,0,0,0,0,1]
-
-        // [1,1,0,1,0,1], // expected 9
-        // [1,0,1,0,0,1],
-        // [0,0,1,0,0,1],
-        // [1,0,0,1,0,0],
-        // [0,1,1,1,0,1],
-        // [1,1,0,0,0,1]
-
-        // [1,1,1,1,1,1,1], // expected 48
-        // [1,1,1,1,1,1,1],
-        // [1,1,1,1,1,1,1],
-        // [1,1,0,1,1,0,1],
-        // [1,1,1,1,1,1,1],
-        // [1,1,1,1,1,1,1],
-        // [1,1,1,1,1,1,1]
-
-        // [1,1,1,1,1,1,1], // expected 49
-        // [1,1,1,1,1,1,1],
-        // [1,1,1,1,1,1,1],
-        // [1,1,1,1,1,1,1],
-        // [1,1,1,1,1,1,1],
-        // [1,1,1,1,1,1,1],
-        // [1,1,1,1,1,1,1]
-
-        [0,0,0,0,0,0,0], // expected 1
-        [0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0]
-    ];
+    uint8[4][] public matrix = new uint8[4][](4);
+    uint public expectedMaxIslandSize;
 
     uint public maxIslandSize;
-    uint public expectedMaxIslandSize = 1;
     
     // Total number of nodes touch in the journey
     uint nodesVisited;      
@@ -93,7 +46,13 @@ contract NxNIsland {
     uint maxRowLength;
     uint maxColLength;
 
-    constructor() {
+    constructor(
+        uint8[4][] memory _matrix,
+        uint _expectedMaxIslandSize
+    ) {
+        matrix = _matrix;
+        expectedMaxIslandSize = _expectedMaxIslandSize;
+
         rowLength = matrix.length;
         colLength = matrix[0].length;
 
@@ -106,7 +65,7 @@ contract NxNIsland {
         return expectedMaxIslandSize;
     }
 
-    function getMatrix() public view returns (uint8[][] memory) {
+    function getMatrix() public view returns (uint8[4][] memory) {
         return matrix;
     }
 
