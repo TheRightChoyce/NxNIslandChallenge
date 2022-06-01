@@ -38,4 +38,34 @@ contract NxNIslandMapTest is Test {
         assertEq( matrix[10], _island.getMatrixValue(2, 2) );
         assertEq( matrix[15], _island.getMatrixValue(3, 3) );
     }
+    function testPushRow() public {
+
+        uint8[16] memory matrix = [
+            1,0,0,0, // row 0
+            0,1,0,0, // row 2
+            0,0,1,0, // row 3
+            0,0,0,1 // row 4
+        ];
+        uint cols = 4;
+        uint rows = matrix.length / cols;
+        
+        NxNIslandMap _island = new NxNIslandMap(cols);
+
+        for (uint i = 0; i < rows; i++) {
+
+            uint8[] memory row = new uint8[](cols);
+
+            for (uint j = 0; j < cols; j++) {
+                row[j] = matrix[(i * cols) + j];
+            }
+            _island.pushRow(i, row);
+        }
+
+        assertEq( matrix.length, _island.getMatrixLength() );
+        assertEq( matrix[0], _island.getMatrixValue(0, 0) );
+        assertEq( matrix[1], _island.getMatrixValue(0, 1) );
+        assertEq( matrix[5], _island.getMatrixValue(1, 1) );
+        assertEq( matrix[10], _island.getMatrixValue(2, 2) );
+        assertEq( matrix[15], _island.getMatrixValue(3, 3) );
+    }
 }

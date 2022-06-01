@@ -8,7 +8,7 @@ contract NxNIslandMap {
     mapping (uint => uint8[]) matrix;
     
     // Track the total length of the N x N matrix
-    uint32 public matrixLength;
+    uint256 public matrixLength;
 
     // Helpers 
     uint numRows;
@@ -37,13 +37,16 @@ contract NxNIslandMap {
         uint _numColumns
     )
     {
-
         numColumns = numRows = _numColumns;
     }
 
     function pushElement (uint row, uint8 el) external {
         matrix[row].push(el);
         matrixLength++;
+    }
+    function pushRow(uint rowIndex, uint8[] memory row) external {
+        matrix[rowIndex] = row;
+        matrixLength += row.length;
     }
 
     function getMatrixLength() public view returns (uint) {
