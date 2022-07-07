@@ -86,7 +86,7 @@ contract NxNIslandTest is Test {
 
         NxNIsland _island = new NxNIsland(matrix, 1);
         uint result = _island.mapIslands();
-        assertEq(result, _island.getExpectedMaxIslandSize());
+        assertEq(result, _island.expectedMaxIslandSize());
     }
     function testAllOnes() public {
 
@@ -99,7 +99,7 @@ contract NxNIslandTest is Test {
 
         NxNIsland _island = new NxNIsland(matrix, 16);
         uint result = _island.mapIslands();
-        assertEq(result, _island.getExpectedMaxIslandSize());
+        assertEq(result, _island.expectedMaxIslandSize());
     }
     function testMatrix1() public {
 
@@ -112,15 +112,6 @@ contract NxNIslandTest is Test {
 
         NxNIsland _island = new NxNIsland(matrix, 2);
         uint result = _island.mapIslands();
-        assertEq(result, _island.getExpectedMaxIslandSize());
+        assertEq(result, _island.expectedMaxIslandSize());
     }
-    // function testMapIslands() public {        
-    //     uint result = island.mapIslands();
-
-    //     console.log("");
-    //     console.log("Longest island:");
-    //     island.logLongestIsland();
-        
-    //     assertEq(result, island.getExpectedMaxIslandSize());
-    // }
 }

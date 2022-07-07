@@ -61,14 +61,6 @@ contract NxNIsland {
         maxColLength = matrix[0].length - 1;
     }
 
-    function getExpectedMaxIslandSize() public view returns (uint) {
-        return expectedMaxIslandSize;
-    }
-
-    function getMatrix() public view returns (uint8[4][] memory) {
-        return matrix;
-    }
-
     // keep track of unique nodeIds
     uint nodeId;
     mapping (uint => mapping(uint => uint) ) public nodeIds;
