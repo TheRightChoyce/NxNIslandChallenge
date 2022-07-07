@@ -1,9 +1,9 @@
-This solves the NxN Binary Matrix question from leet code in Solidity:
+### This solves the NxN Binary Matrix question from leet code in Solidity:
 https://leetcode.com/problems/making-a-large-island/
 
 You can easily test with forge:
 
-$ forge test --match-contract NxNIslandMap --match-test test7x7Array -vv
+`$ forge test --match-contract NxNIslandMap --match-test test7x7Array -vv`
 
 This will input a 7 x 7 array with two zeros in it and compute the max size of 48
 
